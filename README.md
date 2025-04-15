@@ -1,6 +1,3 @@
-Sure! Here's the **complete `README.md` file** with all instructions and context in one single markdown file:
-
----
 
 ```markdown
 # 🏦 SimpleBank Solidity Task
