@@ -1,7 +1,8 @@
 
 # 🏦 SimpleBank Solidity Task
 
-Welcome to the **SimpleBank** smart contract challenge! This is a beginner-friendly Solidity assignment meant to help you practice writing and understanding a smart contract with state variables, mappings, and ether transfers.
+Welcome to the **SimpleBank** smart contract challenge! This is a beginner-friendly 
+Solidity assignment meant to help you practice writing and understanding a smart contract with state variables, mappings, and ether transfers.
 
 ---
 
