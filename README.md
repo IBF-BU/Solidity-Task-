@@ -1,5 +1,4 @@
 
-```markdown
 # 🏦 SimpleBank Solidity Task
 
 Welcome to the **SimpleBank** smart contract challenge! This is a beginner-friendly Solidity assignment meant to help you practice writing and understanding a smart contract with state variables, mappings, and ether transfers.
@@ -116,6 +115,4 @@ return balances[msg.sender];
 ---
 
 Good luck and have fun learning Solidity! 🚀💻
-```
 
-Let me know if you'd like to generate a sample `SimpleBank.sol` alongside or package this into a zip/github structure!
