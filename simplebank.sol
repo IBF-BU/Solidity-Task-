@@ -2,57 +2,80 @@
 pragma solidity ^0.8.0;
 
 contract SimpleBank {
-    // TODO: Declare a public variable 'owner' of type address
-    address public ____;
+    address public owner;
 
-    // TODO: Create a mapping 'balances' that maps address to uint
-    mapping(address => ____) public ____;
+    mapping(address => uint) public balances;
 
-    // Modifier to allow only owner to access certain functions
+    // Reentrancy guard
+    bool private locked;
+
+    // Events
+    event Deposit(address indexed user, uint amount);
+    event Withdrawal(address indexed user, uint amount);
+    event OwnershipTransferred(address indexed previousOwner, address indexed newOwner);
+
+    // Modifier: Only owner can access
     modifier onlyOwner() {
-        // TODO: Require that msg.sender is the owner
-        require(msg.sender == ____, "Not the owner");
+        require(msg.sender == owner, "Not the owner");
         _;
-        
     }
 
-    // TODO: Create a constructor that sets the msg.sender as owner
+    // Modifier: Prevent reentrant calls
+    modifier noReentrant() {
+        require(!locked, "No reentrancy");
+        locked = true;
+        _;
+        locked = false;
+    }
+
     constructor() {
-        ____ = msg.sender;
+        owner = msg.sender;
+        emit OwnershipTransferred(address(0), msg.sender);
     }
 
-    // Function to deposit ether into the contract
+    // Deposit ether into the bank
     function deposit() public payable {
-        // TODO: Increment the sender's balance with msg.value
-        ____[msg.sender] += ____;
+        require(msg.value > 0, "Must deposit more than 0");
+        balances[msg.sender] += msg.value;
+        emit Deposit(msg.sender, msg.value);
     }
 
-    // Function to check balance
+    // Check sender's balance
     function getBalance() public view returns (uint) {
-        // TODO: Return the balance of the sender
-        return ____[msg.sender];
+        return balances[msg.sender];
     }
 
-    // Function to withdraw amount
-    function withdraw(uint amount) public {
-        // TODO: Check if sender has enough balance
-        require(____[msg.sender] >= amount, "Insufficient balance");
+    // Withdraw ether safely
+    function withdraw(uint amount) public noReentrant {
+        require(balances[msg.sender] >= amount, "Insufficient balance");
 
-        // TODO: Deduct the amount from sender's balance
-        ____[msg.sender] -= amount;
+        balances[msg.sender] -= amount;
 
-        // TODO: Transfer the amount to sender
-        payable(msg.sender).transfer(____);
+        (bool success, ) = msg.sender.call{value: amount}("");
+        require(success, "Transfer failed");
+
+        emit Withdrawal(msg.sender, amount);
     }
 
-    // Owner-only function to check contract's total balance
+    // Owner can check total contract balance
     function contractBalance() public view onlyOwner returns (uint) {
-        // TODO: Return address(this).balance
-        return ____;
+        return address(this).balance;
     }
 
-    // Fallback function to receive ether
+    // Transfer ownership to new address
+    function transferOwnership(address newOwner) public onlyOwner {
+        require(newOwner != address(0), "New owner can't be zero address");
+        emit OwnershipTransferred(owner, newOwner);
+        owner = newOwner;
+    }
+
+    // Receive Ether directly
     receive() external payable {
+        deposit();
+    }
+
+    // Fallback function for unexpected calls
+    fallback() external payable {
         deposit();
     }
 }
