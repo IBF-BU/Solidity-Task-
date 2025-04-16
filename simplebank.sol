@@ -13,6 +13,7 @@ contract SimpleBank {
         // TODO: Require that msg.sender is the owner
         require(msg.sender == ____, "Not the owner");
         _;
+        
     }
 
     // TODO: Create a constructor that sets the msg.sender as owner
